@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Struts2 DTD -->
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+    <constant name="struts.devMode" value="true" />
+    <constant name="struts.enable.DynamicMethodInvocation" value="true"/>
+    <package name="process" extends="struts-default">
+        <action name="register" class="action.UserAction" method="register">
+
+        </action>
+        <action name="login" class="action.UserAction" method="login">
+
+        </action>
+        <action name="logout" class="action.UserAction" method="logout">
+
+        </action>
+        
+        <action name="queryUserLibraries" class="action.LibraryAction" method="queryUserLibraries">
+
+        </action>
+        <action name="queryCommonLibraries" class="action.LibraryAction" method="queryCommonLibraries">
+            
+        </action>
+        <action name="addLibraries" class="action.LibraryAction" method="addLibraries">
+
+        </action>
+        <action name="deleteLibraries" class="action.LibraryAction" method="deleteLibraries">
+
+        </action>
+        <action name="updateQuestions" class="action.LibraryAction" method="updateQuestions">
+
+        </action>
+        <action name="updateLibraries" class="action.LibraryAction" method="updateLibraries">
+
+        </action>
+        <action name="queryDetails" class="action.LibraryAction" method="queryDetails">
+
+        </action>
+
+        <action name="queryRecords" class="action.RecordAction" method="queryRecords">
+
+        </action>
+        <action name="addRecord" class="action.RecordAction" method="addRecord">
+
+        </action>
+        <action name="queryRecordDetails" class="action.RecordAction" method="queryRecordDetails">
+
+        </action>
+    </package>
+</struts>
