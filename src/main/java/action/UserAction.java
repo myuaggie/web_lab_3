@@ -95,4 +95,18 @@ public class UserAction extends BaseAction {
         request().getSession().setAttribute("userid",-1);
         return null;
     }
+
+    public String querySessionUser() throws Exception{
+        PrintWriter out = response().getWriter();
+        HttpSession session=request().getSession();
+        ArrayList<String> ur=new ArrayList<String>();
+        ur.add(session.getAttribute("userid").toString());
+        ur.add(session.getAttribute("username").toString());
+        ur.add(session.getAttribute("phone").toString());
+        ur.add(session.getAttribute("email").toString());
+        out.println(JSONArray.fromObject(ur));
+        out.flush();
+        out.close();
+        return null;
+    }
 }

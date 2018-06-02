@@ -17,6 +17,9 @@
         <action name="logout" class="action.UserAction" method="logout">
 
         </action>
+        <action name="querySessionUser" class="action.UserAction" method="querySessionUser">
+
+        </action>
         
         <action name="queryUserLibraries" class="action.LibraryAction" method="queryUserLibraries">
 

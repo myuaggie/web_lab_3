@@ -3,7 +3,7 @@ import React  from 'react'
 import CommonSet from './commonTable'
 import Detail from'./detail'
 import ReactQuill from 'react-quill'
-
+import { hashHistory } from 'react-router'
 var Wrong=React.createClass(
     {
         displayName: 'Wrong',
@@ -239,8 +239,9 @@ var Wrong=React.createClass(
                             login:true,
                             loginPattern:0
                         });
+                       // hashHistory.push("/yourset/"+user[0]);
                     }
-                    this.queryQuestion();
+                    //this.queryQuestion();
                 }.bind(this));
         },
 
@@ -248,6 +249,15 @@ var Wrong=React.createClass(
             this.setState({
                 loginPattern:1
             });
+        },
+
+        handleCloseLogin2:function(){
+            var pop=document.getElementById("poplogin");
+            pop.style.display="none";
+            this.setState({
+                loginPattern:1
+            });
+            hashHistory.push("/yourset/"+this.state.user[0]);
         },
 
         handleCloseLogin: function(){
@@ -401,158 +411,6 @@ var Wrong=React.createClass(
             pop.style.display="block";
         },
 
-        //logout
-
-        saveLogout: function(){
-            this.serverRequest4=$.get('logout',function(data){
-                this.setState({
-                    logoutPattern:0,
-                    login:false,
-                    record:false
-                });
-            }.bind(this));
-        },
-
-        handleCloseLogout: function(){
-            var pop=document.getElementById("poplogout");
-            pop.style.display="none";
-            this.setState({
-                logoutPattern:1
-            });
-        },
-
-        logout: function(){
-            var pop=document.getElementById("poplogout");
-            pop.style.display="block";
-        },
-
-        //usercenter
-
-        handleCloseCenter: function(){
-            var pop=document.getElementById("popusercenter");
-            pop.style.display="none";
-        },
-
-        userCenter: function(){
-            var pop=document.getElementById("popusercenter");
-            pop.style.display="block";
-        },
-
-        //add
-
-        addName:"",
-        addContent:"",
-        addTagOne:"",
-        addTagTwo:"",
-
-        saveAddName: function(e){
-            this.addName=e.target.value;
-        },
-
-        saveAddContent: function(value){
-            this.addContent=value;
-            this.setState({addText:value});
-        },
-
-        saveAddTagOne: function(e){
-            this.addTagOne=e.target.value;
-            this.setState({addTagOne:e.target.value});
-        },
-
-        saveAddTagTwo: function(e){
-            this.addTagTwo=e.target.value;
-            this.setState({addTagTwo:e.target.value});
-        },
-        // MnpltServlet?add=1/0&delete=1/0&update=1/0&key=&name=&content=&reference=&tagOne=&tagTwo=&frequency=1/0&date=1/0
-        saveAdd: function(){
-            var key=null;
-            if(this.state.data.length===0){key=1;}
-            else {
-                key = parseInt(this.state.data[this.state.data.length - 1][0]) + 1;
-            }
-            let info={
-                libraryId:key,
-                name:this.addName,
-                content:this.addContent,
-                tagOne:this.addTagOne,
-                tagTwo:this.addTagTwo
-            };
-            this.serverRequest6=$.post('addLibraries',info,function(data){
-                var pop=document.getElementById("popadd");
-                pop.style.display="none";
-                this.addName="";
-                this.addContent="";
-                this.addTagOne="";
-                this.addTagTwo="";
-                this.setState({addTagOne:"",addTagTwo:"",addText:null});
-                this.queryQuestion();
-            }.bind(this));
-        },
-
-
-
-        handleCloseAdd:function(){
-            var pop=document.getElementById("popadd");
-            pop.style.display="none";
-            this.addName="";
-            this.addContent="";
-            this.addTagOne="";
-            this.addTagTwo="";
-            var input=document.getElementById("questionname");
-            input.value="";
-            input=document.getElementById("questiontagone");
-            input.value="";
-            input=document.getElementById("questiontagtwo");
-            input.value="";
-            this.setState({addTagOne:"",addTagTwo:"",addText:""});
-        },
-
-        addQuestion: function(){
-            var pop=document.getElementById("popadd");
-            pop.style.display="block";
-        },
-
-        //delete
-
-        showDelete: function(){
-            if (!this.state.delete) {
-                var pop = document.getElementsByClassName("delete");
-                for (var i=0;i<pop.length;i++){
-                    pop[i].style.color = "#a1263b";
-                }
-            }
-            else{
-                var pop = document.getElementsByClassName("delete");
-                for (var i=0;i<pop.length;i++){pop[i].style.color = "#2589bf";}
-            }
-            this.setState({delete:!this.state.delete});
-        },
-
-        deleteQuestion: function(e){
-
-            var id=e.target.id;
-            var key=document.getElementById(id).innerHTML;
-            let info={libraryId:key};
-            this.serverRequest7=$.post('deleteLibraries',info,function(data){
-                this.queryQuestion();
-            }.bind(this));
-        },
-
-        //detail
-
-        detailQuestion: function(e){
-            var name=e.target.id;
-            var k=name.indexOf("r");
-            var id=name.substring(0,k)+"0";
-            var key=document.getElementById(id).innerHTML;
-            let info={libraryId:key};
-            this.serverRequest8=$.post('queryDetails',info,function(data){
-                var d=JSON.parse(data);
-                this.setState({detail:true,self:false,detailData:d});
-                //var c=document.getElementById("detailContent");
-                //c.innerHTML=d[1];
-            }.bind(this));
-        },
 
 
 
@@ -565,9 +423,6 @@ var Wrong=React.createClass(
                         {this.renderTable()}
                         {this.renderPopLogin()}
                         {this.renderPopRegister()}
-                        {this.renderPopLogout()}
-                        {this.renderPopUserCenter()}
-                        {this.renderPopAdd()}
                     </div>
                 </div>
             );
@@ -600,7 +455,7 @@ var Wrong=React.createClass(
                 return(
                     <div id="poplogin">
                         <p>hi,{this.state.user[1]}</p>
-                        <button className="close" onClick={this.handleCloseLogin}>close</button>
+                        <button className="close" onClick={this.handleCloseLogin2}>close</button>
                     </div>
                 )
             }
@@ -655,87 +510,6 @@ var Wrong=React.createClass(
             }
         },
 
-        renderPopLogout: function(){
-            if (this.state.logoutPattern===1){
-                return(
-                    <div id="poplogout">
-                        <p>Are you sure to log out?</p>
-                        <button onClick={this.saveLogout}>Yes</button>
-                        <button onClick={this.handleCloseLogout}>No</button>
-                    </div>
-                )
-            }
-            else{
-                return (
-                    <div id="poplogout">
-                        <p>success</p>
-                        <button className="close" onClick={this.handleCloseLogout}>close</button>
-                    </div>
-                )
-            }
-        },
-
-        renderPopUserCenter: function(){
-            if (this.state.user) {
-                return (
-                    <div id="popusercenter">
-                        <p>id: {this.state.user[0]}</p>
-                        <p>name: {this.state.user[1]}</p>
-                        <p>email: {this.state.user[2]}</p>
-                        <p>phone: {this.state.user[3]}</p>
-                        <button className="close" onClick={this.handleCloseCenter}>close</button>
-                    </div>
-                )
-            }
-        },
-
-        renderPopAdd: function(){
-            var ttemp=new Set();
-            var list=[];
-            var temp=this.state.data;
-            if (temp) {
-                var tag1, tag2;
-                for (var i = 0; i < temp.length; i++) {
-                    var str = temp[i][2];
-                    var idx = str.indexOf(" ");
-                    tag1 = str.substring(0, idx);
-                    if (ttemp.has(tag1) === false) {
-                        ttemp.add(tag1);
-                        list.push(tag1);
-                    }
-                    if (idx !== length - 1) {
-
-                        tag2 = str.substring(idx + 1);
-                        if (ttemp.has(tag2) === false) {
-                            ttemp.add(tag2);
-                            list.push(tag2);
-                        }
-                    }
-                }
-            }
-            let tagO=list.map(function(item) {
-                if (item.indexOf(this.state.addTagOne) !== -1) return (<div className="tagHint" key={"1"+item}>{item}</div>)
-            },this);
-            let tagT=list.map(function(item) {
-                if (item.indexOf(this.state.addTagTwo) !== -1) return (<div className="tagHint" key={"2"+item}>{item}</div>)
-            },this);
-            return(
-                <div id="popadd">
-                    <form>
-                        <p>name: <input type="text" name="questionname" onChange={this.saveAddName}/></p>
-                        <div >content: <ReactQuill id="questioncontent" modules={{ formula: true, toolbar:this.toolbarOptions}} style={{height:"200px"}} value={this.state.addText}
-                                                   onChange={this.saveAddContent} /></div>
-                        <p>tagone: <input type="text"  id="questiontagone" name="questiontagone" onChange={this.saveAddTagOne}/></p>
-                        <div className="tag">{tagO}</div>
-                        <p>tagtwo: <input type="text" id="questiontagtwo" name="questiontagtwo" onChange={this.saveAddTagTwo}/></p>
-                        <div className="tag">{tagT}</div>
-                        <input type="button" value="submit" onClick={this.saveAdd}/>
-                    </form>
-                    <button className="close" onClick={this.handleCloseAdd}>close</button>
-                </div>
-            )
-        },
-
 
         renderToolbar: function(){
             return (
@@ -744,163 +518,36 @@ var Wrong=React.createClass(
                         <button onClick={this.queryManQuestion}>Popular Wrong Set</button>
                         <button onClick={this.queryQuestion}>My Wrong Set</button>
                     </div>
-                    {this.renderMnplt()}
                     {this.renderLogin()}
                 </div>
 
             )
         },
 
-        renderMnplt: function(){
-            if (this.state.login && this.state.self){
-                return (
-                    <div className="Mnpltbar" >
-                        <button onClick={this.searchPattern}>Search</button>
-                        <button onClick={this.addQuestion}>Add</button>
-                        <button onClick={this.showDelete}>Delete</button>
-                    </div>)
-            }
-        },
+
 
         renderLogin: function(){
-            if (this.state.login===false){
+
                 return (
                     <div className="Userbar">
                         <button id="loginbtn" onClick={this.login}>Login</button>
                         <button id="registerbtn" onClick={this.register}>Register</button>
                     </div>
                 )
-            }
-            else{
-                return(
-                    <div className="Userbar">
-                        <button id="logoutbtn" onClick={this.logout}>Logout</button>
-                        <button id="usercenterbtn" onClick={this.userCenter}>User Center</button>
-                    </div>
-                )
-            }
+
         },
 
-        renderSearchTable: function(){
-            if (!this.state.search) {
-                return null;
-            }
-            return (
-                <tr onChange={this.searchFilter}>
-                    {this.headers.map(function(_ignore, idx) {
-                        return <td key={idx}><input type="text" data-idx={idx}/></td>;
-                    })}
-                </tr>
-            );
-        },
+
 
 
 
         renderTable: function(){
-            if (this.state.login) {
-                if (this.state.self===true && this.state.data){
-                    return (
-                        <table>
 
-                            <tbody onDoubleClick={this.showEditor}>
-                            {this.renderSearchTable()}
-                            <tr onClick={this.sortTuple}>
-                                {this.headers.map(function (title, idx) {
-                                    if (this.state.sortby === idx) {
-                                        title += this.state.descending ? ' \u2191' : ' \u2193';
-                                    }
-                                    return (<th key={idx}>{title}</th>);
-                                }, this)}
-                            </tr>
-                            {this.state.data.map(function (row, rowidx) {
-                                return (
-                                    <tr key={rowidx}>
-                                        {row.map(function (cell, idx) {
-                                            var content = cell;
-                                            var edit = this.state.edit;
-                                            //只允许修改name和tags
-                                            if (edit && edit.row === rowidx && edit.cell === idx &&(idx===1||idx===2)) {
-                                                if (idx===2){
-                                                    var i=cell.indexOf(" ");
-                                                    var tag1=cell.substring(0,i);
-                                                    var tag2=cell.substring(i+1);
-                                                    if (this.state.tagPattern===0) {
-                                                        content = (
-
-                                                                <form onSubmit={this.saveEditor}>
-                                                                    <input type="text" defaultValue={tag1}/>
-                                                                </form>
-
-                                                        )
-                                                    }
-                                                    else{
-                                                        content = (
-
-                                                                <form onSubmit={this.saveEditor}>
-                                                                    <input type="text" defaultValue={tag2}/>
-                                                                </form>
-                                                           
-                                                        )
-                                                    }
-                                                }
-                                                else {
-                                                    content = (
-                                                        <form onSubmit={this.saveEditor}>
-                                                            <input type="text" defaultValue={cell}/>
-                                                        </form>
-                                                    )
-                                                }
-                                            }
-                                            if (idx===1){
-                                                return <td className="detail"
-                                                           id={"td" + rowidx.toString() + "r"+idx.toString()}
-                                                           onClick={this.detailQuestion} key={idx}
-                                                           data-row={rowidx}>{content}</td>
-                                            }
-                                            if (idx===0){
-                                                if (this.state.delete===true) {
-                                                    return <td className="delete"
-                                                               id={"td" + rowidx.toString() + idx.toString()}
-                                                               onClick={this.deleteQuestion} key={idx}
-                                                               data-row={rowidx}>{content}</td>
-                                                }
-                                                else{
-                                                    return <td className="delete"
-                                                               id={"td" + rowidx.toString() + idx.toString()}
-                                                               key={idx}
-                                                               data-row={rowidx}>{content}</td>
-                                                }
-                                            }
-                                            if (idx===5) return null;
-                                            else {return <td key={idx} data-row={rowidx}>{content}</td>}
-                                        }, this)}
-
-                                    </tr>
-                                );
-                            }, this)}
-                            </tbody>
-                        </table>
-
-                    );
-                }
-                else if (this.state.detail===true){
-                    if (this.state.detailData){
-                        return(
-                            <Detail userData={this.state.user} initialData={this.state.detailData} toolbarOptions={this.toolbarOptions}/>
-                        )
-                    }
-                }
-                else if (this.state.common){
-                    return (<CommonSet/>)
-                }
-            }
-            else{
                 if (this.state.self)
                 {return (<p id="loginHint">please log in</p>);}
                 else if (this.state.common){
                     return (<CommonSet/>)
                 }
-            }
         },
 
 

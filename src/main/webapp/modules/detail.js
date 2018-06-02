@@ -3,24 +3,32 @@ import ReactQuill from 'react-quill'
 
 var Detail= React.createClass({
     displayName: 'Detail',
-    propTypes: {
-        userData: React.PropTypes.arrayOf(
-            React.PropTypes.string
-        ),
-        initialData: React.PropTypes.arrayOf(
-                React.PropTypes.string
-        ),
-        toolbarOptions: React.PropTypes.arrayOf(
-            React.PropTypes.arrayOf(
-                React.PropTypes.string
-            )
-        ),
-    },
+    toolbarOptions:[
+        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+        ['blockquote', 'code-block'],
+
+        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+        [{ 'direction': 'rtl' }],                         // text direction
+
+        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+        ['link', 'image'],
+
+        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        ['formula'],
+        ['clean']                                         // remove formatting button
+    ],
 
     getInitialState: function() {
         return {
-            detailData:this.props.initialData,
-            user:this.props.userData,
+            detailData:null,
+            user:null,
             showRef:false,
             text:null,
             record:false,
@@ -28,6 +36,30 @@ var Detail= React.createClass({
             refText:null,
             answer:null,
         };
+    },
+
+    componentWillMount: function(){
+        let info={libraryId:this.props.params.key};
+        this.serverRequest8=$.post('queryDetails',info,function(data){
+                var d=JSON.parse(data);
+                this.setState({detailData:d});
+            }.bind(this));
+        this.serverRequest22=$.get('querySessionUser',function(data){
+            var u=JSON.parse(data);
+            this.setState({user:u});
+        }.bind(this));
+    },
+
+    componentWillReceiveProps: function(){
+        let info={libraryId:this.props.params.key};
+        this.serverRequest8=$.post('queryDetails',info,function(data){
+            var d=JSON.parse(data);
+            this.setState({detailData:d});
+        }.bind(this));
+        this.serverRequest22=$.get('querySessionUser',function(data){
+            var u=JSON.parse(data);
+            this.setState({user:u});
+        }.bind(this));
     },
 
     showReference: function(){
@@ -238,7 +270,7 @@ var Detail= React.createClass({
     renderEditor: function(){
         return (
             <div id="editor">
-                <ReactQuill modules={{ formula: true, toolbar:this.props.toolbarOptions}} style={{height:"200px"}} value={this.state.text}
+                <ReactQuill modules={{ formula: true, toolbar:this.toolbarOptions}} style={{height:"200px"}} value={this.state.text}
                             onChange={this.handleChangeEditor} />
                 <button id="editorbtn" onClick={this.handleSubmitEditor}>submit</button>
             </div>
@@ -288,6 +320,7 @@ var Detail= React.createClass({
     },
 
     render:function(){
+        if (this.state.detailData){
         return(
             <div className="detailPage">
                 <h id="detailTitle">{this.state.detailData[0]}</h>
@@ -295,7 +328,10 @@ var Detail= React.createClass({
                 <p id="detailDate">updated: {this.state.detailData[4]}</p>
                 {this.renderDetail()}
             </div>
-        )
+        )}
+        else{
+            return (<p> </p>)
+        }
     }
 
 })
